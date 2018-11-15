@@ -1,1 +1,2 @@
-# Learning OpenGL through https://learnopengl.com/ and TheChernoProject
+# Learning OpenGL 
+From https://learnopengl.com/ and TheChernoProject
