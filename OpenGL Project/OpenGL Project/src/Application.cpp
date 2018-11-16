@@ -5,8 +5,32 @@
 #include <string>
 #include <sstream>
 
-
 using namespace std;
+
+//MACROS
+//Break if false
+#define ASSERT(x) if (!(x)) __debugbreak();
+//Calls Clear then the function to check for errors then GLLogCall
+#define GLErrorCall(x) GLClearError();\
+	x;\
+	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+
+static void GLClearError()
+{
+	while (glGetError() != GL_NO_ERROR);
+}
+
+static bool GLLogCall(const char* function, const char* file, int line)
+{
+	//True if no error
+	while (GLenum error = glGetError())
+	{
+		//Prints the error, the function string the error came from, the file its called in, and the line number
+		cout << "[OpenGL ERROR] " << error << ": " << function << " " << file << ":" << line << endl;
+		return false;
+	}
+	return true;
+}
 
 struct ShaderProgramSource
 {
@@ -160,8 +184,7 @@ int main(void)
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
+		GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
 
