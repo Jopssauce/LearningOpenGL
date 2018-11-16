@@ -14,7 +14,7 @@ using namespace std;
 #define GLErrorCall(x) GLClearError();\
 	x;\
 	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
+//NOTE: Improve this soon using OpenGL Debug Output
 static void GLClearError()
 {
 	while (glGetError() != GL_NO_ERROR);
