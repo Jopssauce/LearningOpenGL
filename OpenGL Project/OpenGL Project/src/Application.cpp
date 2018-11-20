@@ -141,19 +141,19 @@ int main(void)
 	};
 	//Vertex Array
 	unsigned int vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+	GLErrorCall(glGenVertexArrays(1, &vao));
+	GLErrorCall(glBindVertexArray(vao));
 
 	VertexBuffer vb(vertices, 4 * 2 * sizeof(float));
 	IndexBuffer ib(indices, 6);
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+	GLErrorCall(glEnableVertexAttribArray(0));
+	GLErrorCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 
 	//Create Shader
 	ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
 	unsigned int shader = CreateShader(source.vertexSource, source.fragmentSrouce);
-	glUseProgram(shader);
+	GLErrorCall(glUseProgram(shader));
 
 	//Passing data from cpu to gpu once shader setup is done
 	int location = glGetUniformLocation(shader, "u_Color");
@@ -170,10 +170,12 @@ int main(void)
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		GLErrorCall(glBindVertexArray(vao));
+
 		GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 		glUniform4f(location, red, 0.0, 0.0, 1.0);
-		GLErrorCall(glBindVertexArray(0));
+
+		GLErrorCall(glBindVertexArray(vao));
+		ib.Bind();
 
 		if (red > 1.0f)
 		{
@@ -191,7 +193,7 @@ int main(void)
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
-	glDeleteProgram(shader);
+	GLErrorCall(glDeleteProgram(shader));
 	glfwTerminate();
 	return 0;
 }
