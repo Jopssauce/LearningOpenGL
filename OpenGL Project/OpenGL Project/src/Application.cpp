@@ -7,30 +7,9 @@
 
 using namespace std;
 
-//MACROS
-//Break if false
-#define ASSERT(x) if (!(x)) __debugbreak();
-//Calls Clear then the function to check for errors then GLLogCall
-#define GLErrorCall(x) GLClearError();\
-	x;\
-	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-//NOTE: Improve this soon using OpenGL Debug Output
-static void GLClearError()
-{
-	while (glGetError() != GL_NO_ERROR);
-}
-
-static bool GLLogCall(const char* function, const char* file, int line)
-{
-	//True if no error
-	while (GLenum error = glGetError())
-	{
-		//Prints the error, the function string the error came from, the file its called in, and the line number
-		cout << "[OpenGL ERROR] " << error << ": " << function << " " << file << ":" << line << endl;
-		return false;
-	}
-	return true;
-}
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 struct ShaderProgramSource
 {
@@ -165,23 +144,12 @@ int main(void)
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	//Store data in buffers to be used by shaders
-	unsigned int buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	//Initializes buffer data to store
-	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), vertices, GL_STATIC_DRAW);
+	VertexBuffer vb(vertices, 4 * 2 * sizeof(float));
+	IndexBuffer ib(indices, 6);
 
-	unsigned int ib;
-	glGenBuffers(1, &ib);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
-	//Initializes buffer data to store
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
-
-	//Sets the type of what the buffer contains
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); \
-	
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
 	//Create Shader
 	ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
 	unsigned int shader = CreateShader(source.vertexSource, source.fragmentSrouce);
@@ -202,8 +170,11 @@ int main(void)
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		GLErrorCall(glBindVertexArray(vao));
 		GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 		glUniform4f(location, red, 0.0, 0.0, 1.0);
+		GLErrorCall(glBindVertexArray(0));
+
 		if (red > 1.0f)
 		{
 			increment -= 0.05f;
