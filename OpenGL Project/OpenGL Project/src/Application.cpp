@@ -124,76 +124,78 @@ int main(void)
 	cout << glGetString(GL_VERSION) << endl;
 
 	glfwSwapInterval(1);
-
-	//Counter Clockwise
-	float vertices[] = {
-		-0.5, -0.5,
-		0.5,  -0.5,
-		0.5,   0.5,
-		-0.5, 0.5,
-		
-	};
-
-	//Index Buffer reuses vertices instead of duplicating them
-	unsigned int indices[] = {
-		0, 1, 2,
-		2, 3, 0
-	};
-	//Vertex Array
-	unsigned int vao;
-	GLErrorCall(glGenVertexArrays(1, &vao));
-	GLErrorCall(glBindVertexArray(vao));
-
-	VertexBuffer vb(vertices, 4 * 2 * sizeof(float));
-	IndexBuffer ib(indices, 6);
-
-	GLErrorCall(glEnableVertexAttribArray(0));
-	GLErrorCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
-
-	//Create Shader
-	ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
-	unsigned int shader = CreateShader(source.vertexSource, source.fragmentSrouce);
-	GLErrorCall(glUseProgram(shader));
-
-	//Passing data from cpu to gpu once shader setup is done
-	int location = glGetUniformLocation(shader, "u_Color");
-	//Break if location not found
-	ASSERT(location != -1)
-	glUniform4f(location, 1.0, 0.0, 0.0, 1.0);
-
-	float red = 0.0f;
-	float increment = 0.05f;
-
-	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(window))
 	{
-		/* Render here */
-		glClear(GL_COLOR_BUFFER_BIT);
+		//Counter Clockwise
+		float vertices[] = {
+			-0.5, -0.5,
+			0.5,  -0.5,
+			0.5,   0.5,
+			-0.5, 0.5,
 
+		};
 
-		GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-		glUniform4f(location, red, 0.0, 0.0, 1.0);
-
+		//Index Buffer reuses vertices instead of duplicating them
+		unsigned int indices[] = {
+			0, 1, 2,
+			2, 3, 0
+		};
+		//Vertex Array
+		unsigned int vao;
+		GLErrorCall(glGenVertexArrays(1, &vao));
 		GLErrorCall(glBindVertexArray(vao));
-		ib.Bind();
 
-		if (red > 1.0f)
+		VertexBuffer vb(vertices, 4 * 2 * sizeof(float));
+		IndexBuffer ib(indices, 6);
+
+		GLErrorCall(glEnableVertexAttribArray(0));
+		GLErrorCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+
+		//Create Shader
+		ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
+		unsigned int shader = CreateShader(source.vertexSource, source.fragmentSrouce);
+		GLErrorCall(glUseProgram(shader));
+
+		//Passing data from cpu to gpu once shader setup is done
+		int location = glGetUniformLocation(shader, "u_Color");
+		//Break if location not found
+		ASSERT(location != -1)
+			glUniform4f(location, 1.0, 0.0, 0.0, 1.0);
+
+		float red = 0.0f;
+		float increment = 0.05f;
+
+		/* Loop until the user closes the window */
+		while (!glfwWindowShouldClose(window))
 		{
-			increment -= 0.05f;
-		}
-		else if (red < 0.0f)
-		{
-			increment += 0.05f;
-		}
-		red += increment;
+			/* Render here */
+			glClear(GL_COLOR_BUFFER_BIT);
 
-		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
 
-		/* Poll for and process events */
-		glfwPollEvents();
+			GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+			glUniform4f(location, red, 0.0, 0.0, 1.0);
+
+			GLErrorCall(glBindVertexArray(vao));
+			ib.Bind();
+
+			if (red > 1.0f)
+			{
+				increment -= 0.05f;
+			}
+			else if (red < 0.0f)
+			{
+				increment += 0.05f;
+			}
+			red += increment;
+
+			/* Swap front and back buffers */
+			glfwSwapBuffers(window);
+
+			/* Poll for and process events */
+			glfwPollEvents();
+		}
+		GLErrorCall(glDeleteProgram(shader));
 	}
-	GLErrorCall(glDeleteProgram(shader));
+	
 	glfwTerminate();
 	return 0;
 }
