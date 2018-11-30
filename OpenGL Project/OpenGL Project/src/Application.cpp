@@ -11,6 +11,7 @@ using namespace std;
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "Shader.h"
+#include "VertexArray.h"
 
 
 int main(void)
@@ -53,9 +54,7 @@ int main(void)
 			2, 3, 0
 		};
 		//Vertex Array
-		unsigned int vao;
-		GLErrorCall(glGenVertexArrays(1, &vao));
-		GLErrorCall(glBindVertexArray(vao));
+		VertexArray vao(1);
 
 		VertexBuffer vb(vertices, 8 * sizeof(float));
 		IndexBuffer ib(indices, 6);
@@ -77,7 +76,7 @@ int main(void)
 			/* Render here */
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			GLErrorCall(glBindVertexArray(vao));
+			vao.Bind();
 			ib.Bind();
 			shader.Bind();
 
