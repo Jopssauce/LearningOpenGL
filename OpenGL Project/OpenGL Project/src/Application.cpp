@@ -57,7 +57,7 @@ int main(void)
 		GLErrorCall(glGenVertexArrays(1, &vao));
 		GLErrorCall(glBindVertexArray(vao));
 
-		VertexBuffer vb(vertices, 4 * 2 * sizeof(float));
+		VertexBuffer vb(vertices, 8 * sizeof(float));
 		IndexBuffer ib(indices, 6);
 
 		GLErrorCall(glEnableVertexAttribArray(0));
@@ -82,7 +82,6 @@ int main(void)
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			GLErrorCall(glBindVertexArray(vao));
-			vb.Bind();
 			ib.Bind();
 			shader.Bind();
 
