@@ -117,7 +117,8 @@ void Shader::SetUniformLocation(const string &name, float v1, float v2, float v3
 int Shader::GetUniformLocation(const string & name)
 {
 	//Return if found in cache
-	if (uniformLocationCache.find(name) != uniformLocationCache.end()) return uniformLocationCache[name];
+	if (uniformLocationCache.find(name) != uniformLocationCache.end()) 
+		return uniformLocationCache[name];
 
 	int location = glGetUniformLocation(id, name.c_str());
 	if (location == -1) 
