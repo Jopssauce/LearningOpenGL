@@ -43,6 +43,7 @@ Shader::Shader(const string &filepath)
 {
 	ShaderProgramSource source = ParseShader(filepath);
 	id = CreateShader(source.vertexSource, source.fragmentSrouce);
+	Bind();
 }
 
 Shader::~Shader()

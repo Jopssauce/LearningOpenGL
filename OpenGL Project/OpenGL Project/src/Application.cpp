@@ -65,11 +65,7 @@ int main(void)
 
 		//Create Shader
 		Shader shader("res/shaders/Basic.shader");
-		shader.Bind();
 		GLErrorCall( shader.SetUniformLocation("u_Color", 1.0, 0.0, 0.0, 1.0));
-		shader.Unbind();
-		vb.Unbind();
-		ib.Unbind();
 		
 
 		float red = 0.0f;
