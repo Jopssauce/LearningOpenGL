@@ -91,7 +91,7 @@ void Shader::SetUniformLocation(const string &name, float v1, float v2, float v3
 	int location = glGetUniformLocation(id, name.c_str());
 	//Break if location not found
 	if (location == -1) cout << name << " Not found" << endl;
-		glUniform4f(location, 1.0, 0.0, 0.0, 1.0);
+		glUniform4f(location, v1, v2, v3, v4);
 }
 
 Shader::Shader(const string &filepath)
