@@ -37,6 +37,29 @@ ShaderProgramSource Shader::ParseShader(const string filepath)
 	return { ss[0].str(), ss[1].str() };
 }
 
+
+
+Shader::Shader(const string &filepath)
+{
+	ShaderProgramSource source = ParseShader(filepath);
+	id = CreateShader(source.vertexSource, source.fragmentSrouce);
+}
+
+Shader::~Shader()
+{
+	GLErrorCall(glDeleteProgram(id));
+}
+
+void Shader::Bind()
+{
+	GLErrorCall(glUseProgram(id));
+}
+
+void Shader::Unbind()
+{
+	GLErrorCall(glUseProgram(0));
+}
+
 unsigned int Shader::CompileShader(unsigned int type, const string & source)
 {
 	unsigned int id = glCreateShader(type);
@@ -87,31 +110,25 @@ unsigned int Shader::CreateShader(const string & vertexShader, const string & fr
 
 void Shader::SetUniformLocation(const string &name, float v1, float v2, float v3, float v4)
 {
-	//Passing data from cpu to gpu once shader setup is done
+	//Passing data from cpu to gpu once shader setup is done	
+	glUniform4f(GetUniformLocation(name), v1, v2, v3, v4);
+}
+
+int Shader::GetUniformLocation(const string & name)
+{
+	//Return if found in cache
+	if (uniformLocationCache.find(name) != uniformLocationCache.end()) return uniformLocationCache[name];
+
 	int location = glGetUniformLocation(id, name.c_str());
-	//Break if location not found
-	if (location == -1) cout << name << " Not found" << endl;
-		glUniform4f(location, v1, v2, v3, v4);
+	if (location == -1) 
+	{
+		cout << name << " Not found" << endl;
+	}
+	else
+	{
+		//Cache the location to avoid having to getuniformlocation everytime if location exists
+		uniformLocationCache[name] = location;
+	}
+	return location;
+		
 }
-
-Shader::Shader(const string &filepath)
-{
-	ShaderProgramSource source = ParseShader(filepath);
-	id = CreateShader(source.vertexSource, source.fragmentSrouce);
-}
-
-Shader::~Shader()
-{
-	GLErrorCall(glDeleteProgram(id));
-}
-
-void Shader::Bind()
-{
-	GLErrorCall(glUseProgram(id));
-}
-
-void Shader::Unbind()
-{
-	GLErrorCall(glUseProgram(0));
-}
-
