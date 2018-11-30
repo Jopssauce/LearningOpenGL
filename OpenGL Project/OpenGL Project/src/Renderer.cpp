@@ -20,3 +20,17 @@ bool GLLogCall(const char* function, const char* file, int line)
 	}
 	return true;
 }
+
+void Renderer::Draw(IndexBuffer & ib, VertexArray & va, Shader & shader, GLenum mode, GLsizei count, GLenum type, const void * indices)
+{
+	va.Bind();
+	ib.Bind();
+	shader.Bind();
+
+	GLErrorCall(glDrawElements(mode, count, type, indices));
+}
+
+void Renderer::Clear()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+}

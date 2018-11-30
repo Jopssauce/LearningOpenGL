@@ -66,7 +66,7 @@ int main(void)
 		Shader shader("res/shaders/Basic.shader");
 		GLErrorCall( shader.SetUniformLocation("u_Color", 1.0, 0.0, 0.0, 1.0));
 		
-
+		Renderer renderer;
 		float red = 0.0f;
 		float increment = 0.05f;
 
@@ -74,13 +74,11 @@ int main(void)
 		while (!glfwWindowShouldClose(window))
 		{
 			/* Render here */
-			glClear(GL_COLOR_BUFFER_BIT);
+			renderer.Clear();
 
-			vao.Bind();
-			ib.Bind();
-			shader.Bind();
 
-			GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+			renderer.Draw(ib, vao, shader, GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+			//GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 			GLErrorCall(shader.SetUniformLocation("u_Color", red, 0.0, 0.0, 1.0));
 
 
