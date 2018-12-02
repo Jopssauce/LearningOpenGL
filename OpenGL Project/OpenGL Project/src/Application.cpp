@@ -12,6 +12,7 @@ using namespace std;
 #include "IndexBuffer.h"
 #include "Shader.h"
 #include "VertexArray.h"
+#include "stb_image.h"
 
 
 int main(void)
@@ -40,12 +41,13 @@ int main(void)
 	glfwSwapInterval(1);
 	{
 		//Counter Clockwise
+		//I started mine from bottom left
 		float vertices[] = {
-			//Pos				//Color
-			-0.5, -0.5, 1.0,	1.0, 0.0, 0.0,
-			0.5,  -0.5, 1.0,	0.0, 1.0, 0.0,
-			0.5,  0.5, 1.0,		0.0, 0.0, 1.0,
-			-0.5, 0.5, 1.0,		1.0, 1.0, 0.0
+			//Pos				//Color			//Texture Coords
+			-0.5, -0.5, 1.0,	1.0, 0.0, 0.0,	0.0, 0.0,
+			0.5,  -0.5, 1.0,	0.0, 1.0, 0.0,	1.0, 0.0,
+			0.5,  0.5, 1.0,		0.0, 0.0, 1.0,	1.0, 1.0,
+			-0.5, 0.5, 1.0,		1.0, 1.0, 0.0,	0.0, 1.0
 
 		};
 
@@ -57,18 +59,49 @@ int main(void)
 		//Vertex Array
 		VertexArray vao(1);
 
-		VertexBuffer vb(vertices, 24 * sizeof(float));
+		VertexBuffer vb(vertices, 32 * sizeof(float));
 		IndexBuffer ib(indices, 6);
 
 		GLErrorCall(glEnableVertexAttribArray(0));
-		GLErrorCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*) (0 * sizeof(float)) ));
+		GLErrorCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*) (0 * sizeof(float)) ));
 		GLErrorCall(glEnableVertexAttribArray(1));
-		GLErrorCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*) (3 * sizeof(float)) ));
+		GLErrorCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*) (3 * sizeof(float)) ));
+		GLErrorCall(glEnableVertexAttribArray(2))
+		GLErrorCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*) (6 * sizeof(float)) ));
 
 		//Create Shader
 		Shader shader("res/shaders/Basic.shader");
 		//GLErrorCall( shader.SetUniformLocation("u_Color", 1.0, 0.0, 0.0, 1.0));
 		
+		//Generate Texture
+		unsigned int texture;
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		//Texture Wrapping
+		glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		//Texture Filtering
+		glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//Load Image
+		int width, height, nrChannels;
+		unsigned char *data = stbi_load("res/images/container.jpg", &width, &height, &nrChannels, 0);
+		if(data)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		else
+		{
+			cout << "ERROR: " << "Could not load texture" << endl;
+		}
+		stbi_image_free(data);
+		
+
+
+
+
+
 		Renderer renderer;
 		float red = 0.0f;
 		float increment = 0.05f;
@@ -79,7 +112,7 @@ int main(void)
 			/* Render here */
 			renderer.Clear();
 
-
+			glBindTexture(GL_TEXTURE_2D, texture);
 			renderer.Draw(ib, vao, shader, GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 			//GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 			//GLErrorCall(shader.SetUniformLocation("u_Color", red, 0.0, 0.0, 1.0));
@@ -87,7 +120,7 @@ int main(void)
 			float time = glfwGetTime();
 			red = (sin(time) / 2.0f);
 			float green = (cos(time) / 2.0f);
-			GLErrorCall(shader.SetUniformLocation("offset", red, green, 0.0, 0.0));
+			//GLErrorCall(shader.SetUniformLocation("offset", red, green, 0.0, 0.0));
 		
 
 			/* Swap front and back buffers */
