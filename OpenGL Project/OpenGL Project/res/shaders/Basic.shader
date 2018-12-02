@@ -4,11 +4,12 @@
 layout (location = 0) in vec4 position;
 layout(location = 1) in vec4 aColor;
 
+uniform vec4 offset;
 out vec4 bColor;
 
 void main() 
 { 
-    gl_Position = position;
+    gl_Position = position + offset;
 	bColor = aColor;
 };
 
