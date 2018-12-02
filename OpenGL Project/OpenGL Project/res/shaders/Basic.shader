@@ -6,13 +6,14 @@ layout(location = 1) in vec4 aColor;
 layout(location = 2) in vec2 aTexCoord;
 
 uniform vec4 offset;
+uniform mat4 transform;
 out vec4 bColor;
 out vec4 bPosition;
 out vec2 bTexCoord;
 
 void main() 
 { 
-    gl_Position = position + offset;
+    gl_Position = transform * position + offset;
 	bColor = aColor;
 	bPosition = gl_Position;
 	bTexCoord = aTexCoord;
@@ -34,5 +35,5 @@ void main()
 { 
 	//fragColor = vec4(bColor + bPosition);
 	//fragColor = texture(texture1, bTexCoord) * vec4(bColor);
-	fragColor = mix(texture(texture1, bTexCoord), texture(texture2, bTexCoord), 0.2);
+	fragColor = mix(texture(texture1, bTexCoord), texture(texture2, bTexCoord), 0.2) * vec4(bColor);
 };

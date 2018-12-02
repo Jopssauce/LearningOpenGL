@@ -4,8 +4,12 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 using namespace std;
+
 
 #include "Renderer.h"
 #include "VertexBuffer.h"
@@ -72,6 +76,7 @@ int main(void)
 
 		//Create Shader
 		Shader shader("res/shaders/Basic.shader");
+		Shader shader2("res/shaders/Basic.shader");
 		//GLErrorCall( shader.SetUniformLocation("u_Color", 1.0, 0.0, 0.0, 1.0));
 		//Create Texture2D
 		Texture2D texture1("res/images/container.jpg", GL_RGB, true);
@@ -79,30 +84,60 @@ int main(void)
 
 		glUniform1i(glGetUniformLocation(shader.id, "texture1"), 0);
 		glUniform1i(glGetUniformLocation(shader.id, "texture2"), 1);
+
+		glUniform1i(glGetUniformLocation(shader2.id, "texture1"), 0);
+		glUniform1i(glGetUniformLocation(shader2.id, "texture2"), 1);
 	
 		Renderer renderer;
 		float red = 0.0f;
 		float increment = 0.05f;
+
+		
+
+		
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
 			/* Render here */
 			renderer.Clear();
-
+			float time = glfwGetTime();
 			glActiveTexture(GL_TEXTURE0);
 			texture1.Bind();
 			glActiveTexture(GL_TEXTURE1);
 			texture2.Bind();
 
-			renderer.Draw(ib, vao, shader, GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-			//GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-			//GLErrorCall(shader.SetUniformLocation("u_Color", red, 0.0, 0.0, 1.0));
+			//Object 1
+			glm::mat4 matrix;
+			//matrix = glm::translate(matrix, glm::vec3(1.0f, 1.0f, 0.0f));
+			matrix = glm::rotate(matrix, glm::radians(360.0f) * (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0));
+			matrix = glm::scale(matrix, glm::vec3(0.5f, 0.5f, 0.5f));
 
-			float time = glfwGetTime();
+			unsigned int transformLocation = glGetUniformLocation(shader.id, "transform");
+			glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(matrix));
+
 			red = (sin(time) / 2.0f);
 			float green = (cos(time) / 2.0f);
-			GLErrorCall(shader.SetUniformLocation("offset", red, green, 0.0, 0.0));
+			//GLErrorCall(shader.SetUniformLocation("offset", red, green, 0.0, 0.0));
+
+			renderer.Draw(ib, vao, shader, GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+			//Object 2
+			matrix = glm::mat4();
+			matrix = glm::translate(matrix, glm::vec3(-0.5f, -0.5f, 0.0f));
+			matrix = glm::rotate(matrix, glm::radians(360.0f) * (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0));
+			matrix = glm::scale(matrix, glm::vec3(sin(time) / 2.0f, sin(time) / 2.0f, sin(time) / 2.0));
+
+			glUniformMatrix4fv(transformLocation, 1, GL_FALSE, &matrix[0][0]);
+
+			//shader2.Bind();
+			//unsigned int transformLocation2 = glGetUniformLocation(shader2.id, "transform");
+			
+			renderer.Draw(ib, vao, shader, GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+			//shader2.Unbind();
+
+			
+			
 		
 
 			/* Swap front and back buffers */
