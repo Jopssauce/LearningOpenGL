@@ -13,6 +13,7 @@ using namespace std;
 #include "Shader.h"
 #include "VertexArray.h"
 #include "stb_image.h"
+#include "Texture2D.h"
 
 
 int main(void)
@@ -72,35 +73,8 @@ int main(void)
 		//Create Shader
 		Shader shader("res/shaders/Basic.shader");
 		//GLErrorCall( shader.SetUniformLocation("u_Color", 1.0, 0.0, 0.0, 1.0));
-		
-		//Generate Texture
-		unsigned int texture;
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		//Texture Wrapping
-		glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		//Texture Filtering
-		glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		//Load Image
-		int width, height, nrChannels;
-		unsigned char *data = stbi_load("res/images/container.jpg", &width, &height, &nrChannels, 0);
-		if(data)
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else
-		{
-			cout << "ERROR: " << "Could not load texture" << endl;
-		}
-		stbi_image_free(data);
-		
-
-
-
-
+		//Create Texture2D
+		Texture2D texture1("res/images/container.jpg");
 
 		Renderer renderer;
 		float red = 0.0f;
@@ -112,7 +86,7 @@ int main(void)
 			/* Render here */
 			renderer.Clear();
 
-			glBindTexture(GL_TEXTURE_2D, texture);
+			texture1.Bind();
 			renderer.Draw(ib, vao, shader, GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 			//GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 			//GLErrorCall(shader.SetUniformLocation("u_Color", red, 0.0, 0.0, 1.0));

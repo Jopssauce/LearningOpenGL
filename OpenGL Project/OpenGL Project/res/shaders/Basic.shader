@@ -27,10 +27,11 @@ in vec4 bPosition;
 in vec2 bTexCoord;
 
 uniform vec4 u_Color;
-uniform sampler2D samplerTex;
+uniform sampler2D texture1;
+uniform sampler2D texture2;
 
 void main() 
 { 
 	//fragColor = vec4(bColor + bPosition);
-	fragColor = texture(samplerTex, bTexCoord) * vec4(bColor);
+	fragColor = texture(texture1, bTexCoord) * vec4(bColor);
 };
