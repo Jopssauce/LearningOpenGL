@@ -41,10 +41,11 @@ int main(void)
 	{
 		//Counter Clockwise
 		float vertices[] = {
-			-0.5, -0.5,
-			0.5,  -0.5,
-			0.5,   0.5,
-			-0.5, 0.5,
+			//Pos				//Color
+			-0.5, -0.5, 1.0,	1.0, 0.0, 0.0,
+			0.5,  -0.5, 1.0,	0.0, 1.0, 0.0,
+			0.5,  0.5, 1.0,		0.0, 0.0, 1.0,
+			-0.5, 0.5, 1.0,		1.0, 0.0, 0.0
 
 		};
 
@@ -56,15 +57,17 @@ int main(void)
 		//Vertex Array
 		VertexArray vao(1);
 
-		VertexBuffer vb(vertices, 8 * sizeof(float));
+		VertexBuffer vb(vertices, 24 * sizeof(float));
 		IndexBuffer ib(indices, 6);
 
 		GLErrorCall(glEnableVertexAttribArray(0));
-		GLErrorCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+		GLErrorCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*) (0 * sizeof(float)) ));
+		GLErrorCall(glEnableVertexAttribArray(1));
+		GLErrorCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*) (3 * sizeof(float)) ));
 
 		//Create Shader
 		Shader shader("res/shaders/Basic.shader");
-		GLErrorCall( shader.SetUniformLocation("u_Color", 1.0, 0.0, 0.0, 1.0));
+		//GLErrorCall( shader.SetUniformLocation("u_Color", 1.0, 0.0, 0.0, 1.0));
 		
 		Renderer renderer;
 		float red = 0.0f;
@@ -79,18 +82,11 @@ int main(void)
 
 			renderer.Draw(ib, vao, shader, GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 			//GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-			GLErrorCall(shader.SetUniformLocation("u_Color", red, 0.0, 0.0, 1.0));
+			//GLErrorCall(shader.SetUniformLocation("u_Color", red, 0.0, 0.0, 1.0));
 
-
-			if (red > 1.0f)
-			{
-				increment -= 0.05f;
-			}
-			else if (red < 0.0f)
-			{
-				increment += 0.05f;
-			}
-			red += increment;
+			float time = glfwGetTime();
+			red = (sin(time) / 2.0f) + 0.5f;
+		
 
 			/* Swap front and back buffers */
 			glfwSwapBuffers(window);
