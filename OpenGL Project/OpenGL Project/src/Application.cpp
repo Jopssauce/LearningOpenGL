@@ -74,8 +74,8 @@ int main(void)
 		Shader shader("res/shaders/Basic.shader");
 		//GLErrorCall( shader.SetUniformLocation("u_Color", 1.0, 0.0, 0.0, 1.0));
 		//Create Texture2D
-		Texture2D texture1("res/images/container.jpg");
-
+		Texture2D texture1("res/images/container.jpg", GL_RGB);
+	
 		Renderer renderer;
 		float red = 0.0f;
 		float increment = 0.05f;
