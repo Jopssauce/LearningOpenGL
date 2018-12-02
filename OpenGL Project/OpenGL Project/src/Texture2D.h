@@ -11,7 +11,7 @@ class Texture2D
 {
 public:
 	unsigned int id;
-	Texture2D(const string &file, GLenum format);
+	Texture2D(const string &file, GLenum format, bool flip);
 	~Texture2D();
 	void Bind();
 	void Unbind();
@@ -19,7 +19,7 @@ public:
 private:
 	void WrapTexture();
 	void FilterTexture();
-	void LoadImage(const string &file, GLenum format);
+	void LoadImage(const string &file, GLenum format, bool flip);
 
 };
 

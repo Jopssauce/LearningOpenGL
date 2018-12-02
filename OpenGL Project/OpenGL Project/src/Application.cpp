@@ -74,7 +74,11 @@ int main(void)
 		Shader shader("res/shaders/Basic.shader");
 		//GLErrorCall( shader.SetUniformLocation("u_Color", 1.0, 0.0, 0.0, 1.0));
 		//Create Texture2D
-		Texture2D texture1("res/images/container.jpg", GL_RGB);
+		Texture2D texture1("res/images/container.jpg", GL_RGB, true);
+		Texture2D texture2("res/images/awesomeface.png", GL_RGBA, true);
+
+		glUniform1i(glGetUniformLocation(shader.id, "texture1"), 0);
+		glUniform1i(glGetUniformLocation(shader.id, "texture2"), 1);
 	
 		Renderer renderer;
 		float red = 0.0f;
@@ -86,7 +90,11 @@ int main(void)
 			/* Render here */
 			renderer.Clear();
 
+			glActiveTexture(GL_TEXTURE0);
 			texture1.Bind();
+			glActiveTexture(GL_TEXTURE1);
+			texture2.Bind();
+
 			renderer.Draw(ib, vao, shader, GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 			//GLErrorCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 			//GLErrorCall(shader.SetUniformLocation("u_Color", red, 0.0, 0.0, 1.0));

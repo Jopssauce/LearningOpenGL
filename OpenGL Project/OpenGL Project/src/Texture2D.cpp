@@ -1,13 +1,13 @@
 #include "Texture2D.h"
 
-Texture2D::Texture2D(const string &file, GLenum format)
+Texture2D::Texture2D(const string &file, GLenum format, bool flip)
 {
 	//Generate Texture
 	GLErrorCall(glGenTextures(1, &id));
 	GLErrorCall(glBindTexture(GL_TEXTURE_2D, id));
 	WrapTexture();
 	FilterTexture();
-	LoadImage(file, format);
+	LoadImage(file, format, flip);
 }
 
 Texture2D::~Texture2D()
@@ -39,10 +39,12 @@ void Texture2D::FilterTexture()
 	GLErrorCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 }
 
-void Texture2D::LoadImage(const string &file, GLenum format)
+void Texture2D::LoadImage(const string &file, GLenum format, bool flip)
 {
 	//Load Image
 	int width, height, nrChannels;
+	//Flip cause opengl is weird
+	stbi_set_flip_vertically_on_load(flip);
 	unsigned char *data = stbi_load(file.c_str(), &width, &height, &nrChannels, 0);
 	if (data)
 	{
