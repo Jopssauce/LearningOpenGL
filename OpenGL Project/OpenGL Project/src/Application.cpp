@@ -85,8 +85,9 @@ int main(void)
 			//GLErrorCall(shader.SetUniformLocation("u_Color", red, 0.0, 0.0, 1.0));
 
 			float time = glfwGetTime();
-			red = (sin(time) / 2.0f) + 0.5f;
-			GLErrorCall(shader.SetUniformLocation("offset", red, 0.0, 0.0, 0.0));
+			red = (sin(time) / 2.0f);
+			float green = (cos(time) / 2.0f);
+			GLErrorCall(shader.SetUniformLocation("offset", red, green, 0.0, 0.0));
 		
 
 			/* Swap front and back buffers */
