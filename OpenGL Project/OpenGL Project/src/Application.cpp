@@ -183,34 +183,7 @@ int main(void)
 				renderer.Draw(ib, vao, shader, GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, nullptr);
 			}
 
-			//Object 1
-			//glm::mat4 matrix;
-			//matrix = glm::translate(matrix, glm::vec3(1.0f, 1.0f, 0.0f));
-			//matrix = glm::rotate(matrix, glm::radians(360.0f) * (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0));
-			//matrix = glm::scale(matrix, glm::vec3(0.5f, 0.5f, 0.5f));
-
-			//unsigned int transformLocation = glGetUniformLocation(shader.id, "transform");
-			//glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(matrix));
-
-			//red = (sin(time) / 2.0f);
-			//float green = (cos(time) / 2.0f);
-			//GLErrorCall(shader.SetUniformLocation("offset", red, green, 0.0, 0.0));
-
-			
-
-			//Object 2
-			//matrix = glm::mat4();
-			//matrix = glm::translate(matrix, glm::vec3(-0.5f, -0.5f, 0.0f));
-			//matrix = glm::rotate(matrix, glm::radians(360.0f) * (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0));
-			//matrix = glm::scale(matrix, glm::vec3(sin(time) / 2.0f, sin(time) / 2.0f, sin(time) / 2.0));
-
-			//glUniformMatrix4fv(transformLocation, 1, GL_FALSE, &matrix[0][0]);
-
-			//shader2.Bind();
-			//unsigned int transformLocation2 = glGetUniformLocation(shader2.id, "transform");
-			
-			//renderer.Draw(ib, vao, shader, GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-			//shader2.Unbind();
+		
 
 			
 			
