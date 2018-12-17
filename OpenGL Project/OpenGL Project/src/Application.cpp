@@ -24,6 +24,30 @@ using namespace std;
 #include "Transform.h"
 
 
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+
+float currentFrame = 0.0f;
+float lastFrame = 0.0f;
+float deltaTime = 0.0f;
+
+
+void processInput(GLFWwindow *window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+	float cameraSpeed = 2.5f * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		cameraPos += cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		cameraPos -= cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+}
+
 int main(void)
 {
 	GLFWwindow* window;
@@ -164,9 +188,16 @@ int main(void)
 
 		bool show_demo_window = false;
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+		
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
+			currentFrame = glfwGetTime();
+			deltaTime = currentFrame - lastFrame;
+			lastFrame = currentFrame;
+			processInput(window);
+
 			/* Render here */
 			renderer.Clear();
 			float time = glfwGetTime();
@@ -182,24 +213,21 @@ int main(void)
 			glfwGetWindowSize(window, &width, &height);
 			
 			glm::mat4 view;
+			view = glm::lookAt(cameraPos, cameraPos + cameraFront, glm::vec3(0.0f, 1.0, 0.0f));
+
 			glm::mat4 projection;
-			view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 			projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 			
-			unsigned int viewLoc = glGetUniformLocation(shader.id, "view");
-			unsigned int projectionLoc = glGetUniformLocation(shader.id, "projection");
+			shader.SetMatrix4Location("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader.SetMatrix4Location("projection", 1, GL_FALSE, glm::value_ptr(projection));
 
 			
-			GLErrorCall(glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view)));
-			GLErrorCall(glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection)));
 
 			for (int i = 0; i < 10; i++)
 			{
 				Transform transform;
 				transform.Translate(cubePositions[i]);
 				transform.Rotate(glm::vec3(glm::radians(10.0f * i + 1) * (float)glfwGetTime(), glm::radians(20.0f * i + 1) * (float)glfwGetTime(), 1.0f));
-				
-				glm::mat4 test;
 
 				shader.SetMatrix4Location("model", 1, GL_FALSE, transform.GetValue());
 				renderer.Draw(ib, vao, shader, GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, nullptr);
@@ -248,6 +276,9 @@ int main(void)
 			glfwPollEvents();
 		}
 	}
+
+
+
 	// Cleanup
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
