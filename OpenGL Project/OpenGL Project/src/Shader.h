@@ -29,6 +29,7 @@ public:
 	void Bind();
 	void Unbind();
 	void SetUniformLocation(const string &name, float v1 = 1.0, float v2 = 1.0, float v3 = 1.0, float v4 = 1.0);
+	void SetMatrix4Location(const string &location, int count, GLboolean transpose, float *value);
 	int GetUniformLocation(const string &name);
 
 

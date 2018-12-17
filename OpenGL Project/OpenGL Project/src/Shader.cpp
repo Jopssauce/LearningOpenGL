@@ -115,6 +115,11 @@ void Shader::SetUniformLocation(const string &name, float v1, float v2, float v3
 	glUniform4f(GetUniformLocation(name), v1, v2, v3, v4);
 }
 
+void Shader::SetMatrix4Location(const string &location, int count, GLboolean transpose, float * value)
+{
+	GLErrorCall(glUniformMatrix4fv(GetUniformLocation(location), count, transpose, value));
+}
+
 int Shader::GetUniformLocation(const string & name)
 {
 	//Return if found in cache

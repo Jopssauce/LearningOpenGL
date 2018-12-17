@@ -21,6 +21,7 @@ using namespace std;
 #include "VertexArray.h"
 #include "stb_image.h"
 #include "Texture2D.h"
+#include "Transform.h"
 
 
 int main(void)
@@ -194,12 +195,13 @@ int main(void)
 
 			for (int i = 0; i < 10; i++)
 			{
-				glm::mat4 model;
-				model = glm::translate(model, cubePositions[i]);
-				model = glm::rotate(model, glm::radians(20.0f * i + 1) * (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
+				Transform transform;
+				transform.Translate(cubePositions[i]);
+				transform.Rotate(glm::vec3(glm::radians(10.0f * i + 1) * (float)glfwGetTime(), glm::radians(20.0f * i + 1) * (float)glfwGetTime(), 1.0f));
+				
+				glm::mat4 test;
 
-				unsigned int modelLoc = glGetUniformLocation(shader.id, "model");
-				GLErrorCall(glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]));
+				shader.SetMatrix4Location("model", 1, GL_FALSE, transform.GetValue());
 				renderer.Draw(ib, vao, shader, GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, nullptr);
 			}
 
