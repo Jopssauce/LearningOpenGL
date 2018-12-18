@@ -22,6 +22,7 @@ using namespace std;
 #include "stb_image.h"
 #include "Texture2D.h"
 #include "Transform.h"
+#include "Camera.h"
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
@@ -206,7 +207,7 @@ int main(void)
 		glfwGetWindowSize(window, &width, &height);
 		lastX = width * 0.5f;
 		lastY = height * 0.5f;
-		
+		Camera camera;
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
@@ -227,13 +228,13 @@ int main(void)
 			ImGui::NewFrame();
 			//MVP
 			glfwGetWindowSize(window, &width, &height);
-			glm::mat4 view;
-			view = glm::lookAt(cameraPos, cameraPos + cameraFront, glm::vec3(0.0f, 1.0, 0.0f));
+			camera.LookAt(cameraPos, cameraPos + cameraFront, glm::vec3(0.0f, 1.0f, 0.0f));
+
 
 			glm::mat4 projection;
 			projection = glm::perspective(glm::radians(fov), (float)width / (float)height, 0.1f, 100.0f);
 			
-			shader.SetMatrix4Location("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader.SetMatrix4Location("view", 1, GL_FALSE, camera.GetValue());
 			shader.SetMatrix4Location("projection", 1, GL_FALSE, glm::value_ptr(projection));
 
 			
