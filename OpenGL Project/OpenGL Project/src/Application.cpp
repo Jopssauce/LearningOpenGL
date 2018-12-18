@@ -22,7 +22,8 @@ using namespace std;
 #include "stb_image.h"
 #include "Texture2D.h"
 #include "Transform.h"
-
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -32,7 +33,13 @@ float currentFrame = 0.0f;
 float lastFrame = 0.0f;
 float deltaTime = 0.0f;
 
+float lastX;
+float lastY;
 
+float pitch;
+float yaw = -90.0f;
+
+float fov = 45.0f;
 void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -47,6 +54,8 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
+
+
 
 int main(void)
 {
@@ -70,6 +79,11 @@ int main(void)
 	glfwMakeContextCurrent(window);
 	if (glewInit() != GLEW_OK) cout << "Im sad now" << endl;
 	cout << glGetString(GL_VERSION) << endl;
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+
 
 	glfwSwapInterval(1);
 	{
@@ -188,7 +202,10 @@ int main(void)
 
 		bool show_demo_window = false;
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
+		int width, height;
+		glfwGetWindowSize(window, &width, &height);
+		lastX = width * 0.5f;
+		lastY = height * 0.5f;
 		
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
@@ -196,7 +213,7 @@ int main(void)
 			currentFrame = glfwGetTime();
 			deltaTime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
-			processInput(window);
+
 
 			/* Render here */
 			renderer.Clear();
@@ -209,14 +226,12 @@ int main(void)
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
 			//MVP
-			int width, height;
 			glfwGetWindowSize(window, &width, &height);
-			
 			glm::mat4 view;
 			view = glm::lookAt(cameraPos, cameraPos + cameraFront, glm::vec3(0.0f, 1.0, 0.0f));
 
 			glm::mat4 projection;
-			projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+			projection = glm::perspective(glm::radians(fov), (float)width / (float)height, 0.1f, 100.0f);
 			
 			shader.SetMatrix4Location("view", 1, GL_FALSE, glm::value_ptr(view));
 			shader.SetMatrix4Location("projection", 1, GL_FALSE, glm::value_ptr(projection));
@@ -274,6 +289,7 @@ int main(void)
 
 			/* Poll for and process events */
 			glfwPollEvents();
+			processInput(window);
 		}
 	}
 
@@ -285,4 +301,39 @@ int main(void)
 	ImGui::DestroyContext();
 	glfwTerminate();
 	return 0;
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	float xOffset = xpos - lastX;
+	float yOffset = lastY - ypos;
+
+	lastX = xpos;
+	lastY = ypos;
+
+	float sensitivity = 0.05f;
+	xOffset *= sensitivity;
+	yOffset *= sensitivity;
+
+	pitch += yOffset;
+	yaw += xOffset;
+
+	if (pitch > 89.0f) pitch = 89.0f;
+	if (pitch < -89.0f) pitch = -89.0f;
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
+	cameraFront = glm::normalize(front);
+}
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	if (fov >= 1.0f && fov <= 45.0f)
+		fov -= yoffset;
+	if (fov <= 1.0f)
+		fov = 1.0f;
+	if (fov >= 45.0f)
+		fov = 45.0f;
 }
