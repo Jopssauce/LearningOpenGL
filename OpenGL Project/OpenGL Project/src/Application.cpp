@@ -41,6 +41,7 @@ float pitch;
 float yaw = -90.0f;
 
 float fov = 45.0f;
+bool tab = false;
 void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -53,9 +54,24 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;		
 }
-
+			
+void tab_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_TAB && action == GLFW_PRESS && tab == false)
+	{
+		cout << tab << endl;
+		tab = true;
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+	else if (key == GLFW_KEY_TAB && action == GLFW_PRESS && tab == true)
+	{
+		cout << tab << endl;
+		tab = false;
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+}
 
 
 int main(void)
@@ -84,7 +100,7 @@ int main(void)
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
-
+	glfwSetKeyCallback(window, tab_callback);
 
 	glfwSwapInterval(1);
 	{
@@ -202,7 +218,8 @@ int main(void)
 		ImGui::StyleColorsDark();
 
 		bool show_demo_window = false;
-		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+		//ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+		ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.00f);
 		int width, height;
 		glfwGetWindowSize(window, &width, &height);
 		lastX = width * 0.5f;
