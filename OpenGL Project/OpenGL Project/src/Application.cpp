@@ -102,39 +102,43 @@ int main(void)
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetKeyCallback(window, tab_callback);
 
+	float r = 1.0f;
+	float g = 1.0f;
+	float b = 1.0f;
+	float a = 1.0f;
 	glfwSwapInterval(1);
 	{
 		//Counter Clockwise
 		float vertices[] = {
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-			0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-			0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,	r, g, b, a,	0.0f, 0.0f,
+			0.5f, -0.5f, -0.5f,		r, g, b, a,	1.0f, 0.0f,
+			0.5f,  0.5f, -0.5f,		r, g, b, a,	1.0f, 1.0f,
+			-0.5f,  0.5f, -0.5f,	r, g, b, a,	0.0f, 1.0f,
 
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,	r, g, b, a,	0.0f, 0.0f,
+			0.5f, -0.5f,  0.5f,		r, g, b, a,	1.0f, 0.0f,
+			0.5f,  0.5f,  0.5f,		r, g, b, a,	1.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f,	r, g, b, a,	0.0f, 1.0f,
 
-			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,	r, g, b, a,	1.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,	r, g, b, a,	1.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,	r, g, b, a,	0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,	r, g, b, a,	0.0f, 0.0f,
 
-			0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			0.5f,  0.5f,  0.5f,		r, g, b, a,	1.0f, 0.0f,
+			0.5f,  0.5f, -0.5f,		r, g, b, a,	1.0f, 1.0f,
+			0.5f, -0.5f, -0.5f,		r, g, b, a,	0.0f, 1.0f,
+			0.5f, -0.5f,  0.5f,		r, g, b, a,	0.0f, 0.0f,
 
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-			0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,	r, g, b, a,	0.0f, 1.0f,
+			0.5f, -0.5f, -0.5f,		r, g, b, a,	1.0f, 1.0f,
+			0.5f, -0.5f,  0.5f,		r, g, b, a,	1.0f, 0.0f,
+			-0.5f, -0.5f,  0.5f,	r, g, b, a,	0.0f, 0.0f,
 
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,	r, g, b, a,	0.0f, 1.0f,
+			0.5f,  0.5f, -0.5f,		r, g, b, a,	1.0f, 1.0f,
+			0.5f,  0.5f,  0.5f,		r, g, b, a,	1.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,	r, g, b, a,	0.0f, 0.0f,
 		};
 		//Index Buffer reuses vertices instead of duplicating them
 		unsigned int indices[] = {
@@ -178,11 +182,11 @@ int main(void)
 		IndexBuffer ib(indices, sizeof(indices));
 
 		GLErrorCall(glEnableVertexAttribArray(0));
-		GLErrorCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*) (0 * sizeof(float)) ));
-		//GLErrorCall(glEnableVertexAttribArray(1));
-		//GLErrorCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*) (3 * sizeof(float)) ));
+		GLErrorCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (void*) (0 * sizeof(float)) ));
+		GLErrorCall(glEnableVertexAttribArray(1));
+		GLErrorCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (void*) (3 * sizeof(float)) ));
 		GLErrorCall(glEnableVertexAttribArray(2))
-		GLErrorCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*) (3 * sizeof(float)) ));
+		GLErrorCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (void*) (7 * sizeof(float)) ));
 
 		//Create Shader
 		Shader shader("res/shaders/Basic.shader");
